@@ -56,5 +56,5 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<DomainManagementService>();
     })
     .Build();
-    
+
 await host.RunAsync();

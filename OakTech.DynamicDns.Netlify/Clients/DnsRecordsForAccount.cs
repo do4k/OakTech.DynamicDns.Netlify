@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace OakTech.DynamicDns.Netlify.Clients;
 
-public class DnsForSiteResponse
+public class DnsRecordsForAccount
 {
     public string? Id { get; set; } = null!;
     public string? Name { get; set; } = null!;
