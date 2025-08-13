@@ -27,6 +27,7 @@ public class DomainManagementService(
                 if (ipResponse.Ip == _cachedIp)
                 {
                     await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                    logger.LogInformation("IP address has not changed: {Ip}", ipResponse.Ip);
                     continue;
                 }
                 
