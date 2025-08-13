@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,11 +26,9 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((context, services) =>
     {
-        services.Configure<IpifyOptions>(context.Configuration.GetSection("Ipify"));
         services.AddOptions<IpifyOptions>()
             .Bind(context.Configuration.GetSection("Ipify"));
         
-        services.Configure<NetlifyOptions>(context.Configuration.GetSection("Netlify"));
         services.AddOptions<NetlifyOptions>()
             .Bind(context.Configuration.GetSection("Netlify"));
 
@@ -39,9 +38,13 @@ var host = Host.CreateDefaultBuilder(args)
         
         var netlifyOptions = context.Configuration.GetSection("Netlify").Get<NetlifyOptions>();
         services.AddRefitClient<INetlifyApi>()
-            .ConfigureHttpClient(c => c.BaseAddress = new Uri(netlifyOptions.Endpoint))
+            .ConfigureHttpClient(c =>
+            {
+                c.BaseAddress = new Uri(netlifyOptions.Endpoint);
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", netlifyOptions.AccessToken);
+            })
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler())
-            .AddTypedClient((client, sp) =>
+            .AddTypedClient((client, _) =>
             {
                 var refitSettings = new RefitSettings
                 {
